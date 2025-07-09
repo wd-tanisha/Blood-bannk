@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manage Receivers</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+
+  <!-- ✅ Inline Notification Bar -->
+  <div id="inlineAlert" class="inline-alert">
+    <span id="inlineAlertText"></span>
+  </div>
+
+  <div id="header-container"></div>
+
+  <main class="dashboard">
+    <h2>Manage Receivers - <span id="hospitalName">Hospital</span></h2>
+
+    <section class="card">
+      <form id="receiverForm">
+        <input type="hidden" id="receiverId" />
+        <input type="text" id="receiverName" placeholder="Name" required />
+        <select id="receiverBloodGroup" required>
+          <option value="">Select Blood Group</option>
+          <option value="A+">A+</option>
+          <option value="A-">A-</option>
+          <option value="B+">B+</option>
+          <option value="B-">B-</option>
+          <option value="AB+">AB+</option>
+          <option value="AB-">AB-</option>
+          <option value="O+">O+</option>
+          <option value="O-">O-</option>
+        </select>
+        <input type="text" id="receiverMobile" placeholder="Mobile" required />
+        <input type="text" id="receiverCity" placeholder="City" required />
+        <button type="submit">Add / Update</button>
+      </form>
+
+      <input type="text" id="searchReceiver" placeholder="Search receivers by name..." oninput="filterReceivers()" />
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Blood Group</th>
+            <th>Mobile</th>
+            <th>City</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="receiverTable"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- Add datalist for city suggestions -->
+  <datalist id="cityList"></datalist>
+
+  <script type="module">
+    import { loadHeader } from "../components/header.js";
+    loadHeader();
+  </script>
+
+  <!-- ✅ Alert Logic (on window) -->
+  <script>
+  window._inlineAlertTimeout = null;
+
+  window.showInlineAlert = function (message, color = "#4caf50") {
+    const bar = document.getElementById("inlineAlert");
+    const text = document.getElementById("inlineAlertText");
+
+    if (bar && text) {
+      text.textContent = message;
+      bar.style.backgroundColor = color;
+      bar.style.display = "flex";
+      bar.classList.add("show");
+
+      // Clear any previous timeout
+      if (window._inlineAlertTimeout) {
+        clearTimeout(window._inlineAlertTimeout);
+        window._inlineAlertTimeout = null;
+      }
+      // Auto-close after 20 seconds
+      window._inlineAlertTimeout = setTimeout(() => {
+        window.closeInlineAlert();
+      }, 20000);
+      // Debug
+      console.log("Alert shown for 20 seconds");
+    }
+  };
+
+  window.closeInlineAlert = function () {
+    const bar = document.getElementById("inlineAlert");
+    const text = document.getElementById("inlineAlertText");
+
+    if (bar && text) {
+      text.textContent = "";
+      bar.style.display = "none";
+      bar.classList.remove("show");
+    }
+    // Clear timeout when closed manually
+    if (window._inlineAlertTimeout) {
+      clearTimeout(window._inlineAlertTimeout);
+      window._inlineAlertTimeout = null;
+    }
+  };
+  </script>
+
+  <script>
+  // Load saved cities from localStorage and populate datalist
+  function loadCityList() {
+    const cityList = JSON.parse(localStorage.getItem("receiverCities") || "[]");
+    const datalist = document.getElementById("cityList");
+    datalist.innerHTML = "";
+    cityList.forEach(city => {
+      const option = document.createElement("option");
+      option.value = city;
+      datalist.appendChild(option);
+    });
+  }
+
+  // Save new city if not already present
+  function saveCity(city) {
+    let cityList = JSON.parse(localStorage.getItem("receiverCities") || "[]");
+    if (city && !cityList.includes(city)) {
+      cityList.push(city);
+      localStorage.setItem("receiverCities", JSON.stringify(cityList));
+      loadCityList();
+    }
+  }
+
+  // Attach datalist to city input
+  document.getElementById("receiverCity").setAttribute("list", "cityList");
+
+  // Load city list on page load
+  loadCityList();
+
+  // Hook into the form submit to save new city
+  document.getElementById("receiverForm").addEventListener("submit", function(e) {
+    const city = document.getElementById("receiverCity").value.trim();
+    saveCity(city);
+  });
+  </script>
+
+  <script src="../js/hospital_receivers.js"></script>
+</body>
+</html>

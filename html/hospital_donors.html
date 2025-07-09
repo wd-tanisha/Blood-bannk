@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Manage Donors</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+  <div id="header-container"></div>
+
+  <main class="dashboard">
+    <h2>Manage Donors - <span id="hospitalName">Hospital</span></h2>
+
+    <section class="card">
+      <!-- ✅ Status Message -->
+      <p id="statusMessage" style="display:none; padding:10px; border:1px solid; border-radius:5px;">
+        <span id="statusText"></span>
+        <button onclick="closeStatus()" style="float:right; background:none; border:none; cursor:pointer;">❌</button>
+      </p>
+
+      <!-- ✅ Donor Form -->
+      <form id="donorForm">
+        <input type="hidden" id="donorId" />
+        <input type="text" id="donorName" placeholder="Name" required />
+        <select id="donorBloodGroup" required>
+          <option value="">Select Blood Group</option>
+          <option value="A+">A+</option>
+          <option value="A-">A-</option>
+          <option value="B+">B+</option>
+          <option value="B-">B-</option>
+          <option value="AB+">AB+</option>
+          <option value="AB-">AB-</option>
+          <option value="O+">O+</option>
+          <option value="O-">O-</option>
+        </select>
+        <input type="text" id="donorMobile" placeholder="Mobile" required />
+        <input type="text" id="donorCity" placeholder="City" required list="donorCityList" />
+        <button type="submit">Add / Update</button>
+      </form>
+      <datalist id="donorCityList"></datalist>
+
+      <input type="text" id="searchDonor" placeholder="Search donors by name..." oninput="filterDonors()" />
+      <table>
+        <thead>
+          <tr><th>Name</th><th>Blood Group</th><th>Mobile</th><th>City</th><th>Action</th></tr>
+        </thead>
+        <tbody id="donorTable"></tbody>
+      </table>
+    </section>
+  </main>
+
+  <!-- Reusable Header -->
+  <script type="module">
+    import { loadHeader } from "../components/header.js";
+    loadHeader();
+  </script>
+
+  <!-- ✅ External donor logic -->
+  <script src="../js/hospital_donors.js"></script>
+
+  <!-- ✅ Inline utilities -->
+  <script>
+    function editDonor(encodedDonor) {
+      const donor = JSON.parse(decodeURIComponent(encodedDonor));
+      document.getElementById("donorId").value = donor.id;
+      document.getElementById("donorName").value = donor.name;
+      document.getElementById("donorBloodGroup").value = donor.bloodGroup;
+      document.getElementById("donorMobile").value = donor.mobile;
+      document.getElementById("donorCity").value = donor.city;
+    }
+
+    function closeStatus() {
+      const statusBox = document.getElementById("statusMessage");
+      const statusText = document.getElementById("statusText");
+      statusText.textContent = "";
+      statusBox.style.display = "none";
+    }
+
+    // Load saved donor cities from localStorage and populate datalist
+    function loadDonorCityList() {
+      const cityList = JSON.parse(localStorage.getItem("donorCities") || "[]");
+      const datalist = document.getElementById("donorCityList");
+      datalist.innerHTML = "";
+      cityList.forEach(city => {
+        const option = document.createElement("option");
+        option.value = city;
+        datalist.appendChild(option);
+      });
+    }
+
+    // Save new city if not already present
+    function saveDonorCity(city) {
+      let cityList = JSON.parse(localStorage.getItem("donorCities") || "[]");
+      if (city && !cityList.includes(city)) {
+        cityList.push(city);
+        localStorage.setItem("donorCities", JSON.stringify(cityList));
+        loadDonorCityList();
+      }
+    }
+
+    // Attach datalist to city input
+    document.getElementById("donorCity").setAttribute("list", "donorCityList");
+
+    // Load city list on page load
+    loadDonorCityList();
+
+    // Hook into the form submit to save new city
+    document.getElementById("donorForm").addEventListener("submit", function(e) {
+      const city = document.getElementById("donorCity").value.trim();
+      saveDonorCity(city);
+    });
+  </script>
+</body>
+</html>

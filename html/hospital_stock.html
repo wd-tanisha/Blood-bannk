@@ -1,0 +1,76 @@
+<!-- hospital_stock.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Hospital Stock | Blood Bank</title>
+  <link rel="stylesheet" href="../css/style.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+  <!-- Header will load dynamically -->
+  <div id="header-container"></div>
+
+  <main class="dashboard">
+    <h2>Welcome: <span id="hospitalName">Hospital</span></h2>
+
+    <!-- Stock Form -->
+    <section class="card">
+      <h3>Add / Update Blood Stock</h3>
+      <form id="stockForm">
+        <label for="bloodGroup">Blood Group:</label>
+        <select id="bloodGroup" required>
+          <option value="">-- Select Blood Group --</option>
+          <option value="A+">A+</option>
+          <option value="A-">A-</option>
+          <option value="B+">B+</option>
+          <option value="B-">B-</option>
+          <option value="O+">O+</option>
+          <option value="O-">O-</option>
+          <option value="AB+">AB+</option>
+          <option value="AB-">AB-</option>
+        </select>
+
+        <label for="units">Units:</label>
+        <input type="number" id="units" placeholder="e.g., 5" required />
+
+        <button type="submit">Add / Update</button>
+      </form>
+    </section>
+
+    <!-- Current Stock Table -->
+    <section class="card">
+      <h3>Current Stock</h3>
+      <table id="stockTable">
+        <thead>
+          <tr>
+            <th>Blood Group</th>
+            <th>Units</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </section>
+
+    <!-- Chart -->
+    <section class="card">
+      <h3>Stock Overview</h3>
+      <canvas id="stockChart" width="400" height="400"></canvas>
+    </section>
+
+    <!-- Logout -->
+    <button class="logout-btn" onclick="logout()">Logout</button>
+  </main>
+
+  <!-- Load dynamic header -->
+  <script type="module">
+    import { loadHeader } from "../components/header.js";
+    loadHeader();
+  </script>
+
+  <!-- Stock logic -->
+  <script src="../js/hospital_stock.js"></script>
+</body>
+</html>

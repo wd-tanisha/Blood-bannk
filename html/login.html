@@ -1,0 +1,29 @@
+<!-- login.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Login | Blood Bank</title>
+  <link rel="stylesheet" href="../css/style.css" />
+</head>
+<body>
+
+  <div id="header-container"></div>
+
+  <main class="login-main">
+    <h2>Login</h2>
+    <form id="loginForm">
+      <input type="hidden" id="loginRole" />
+      <label>Email: <input type="email" id="email" required></label><br>
+      <label>Password: <input type="password" id="password" required></label><br>
+      <button type="submit">Login</button>
+       <p style="padding-top: 15px;">New User? <a href="register.html">Register here</a></p>
+    </form>
+  </main>
+    <!-- Footer will be injected here -->
+  <div id="footer-container"></div>
+
+  <script src="../JS/auth.js"></script>
+</body>
+</html>
